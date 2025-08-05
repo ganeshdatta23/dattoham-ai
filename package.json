@@ -1,0 +1,252 @@
+{
+  "name": "dattoham-ai-code-agent",
+  "displayName": "Dattoham AI",
+  "description": "World's most advanced free coding assistant with local Ollama integration, matching Claude Sonnet 4 performance",
+  "version": "1.0.2",
+  "publisher": "GaneshDattaPadamata",
+  "author": {
+    "name": "dattoham-ai",
+    "email": "ganeshdattapadamata@gmail.com"
+  },
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Machine Learning",
+    "Snippets",
+    "Other"
+  ],
+  "keywords": [
+    "ai",
+    "coding assistant",
+    "ollama",
+    "code generation",
+    "optimization",
+    "free",
+    "local inference"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ganeshdatta23/dattoham-ai"
+  },
+  "bugs": {
+    "url": "https://github.com/ganeshdatta23/dattoham-ai/issues"
+  },
+  "homepage": "https://ganeshdatta23.github.io/dattoham-ai",
+  "contributes": {
+    "commands": [
+      {
+        "command": "dattoham-ai.generateCode",
+        "title": "Generate Code",
+        "category": "Dattoham AI"
+      },
+      {
+        "command": "dattoham-ai.optimizeCode",
+        "title": "Optimize Code",
+        "category": "Dattoham AI"
+      },
+      {
+        "command": "dattoham-ai.explainCode",
+        "title": "Explain Code",
+        "category": "Dattoham AI"
+      },
+      {
+        "command": "dattoham-ai.debugCode",
+        "title": "Debug Code",
+        "category": "Dattoham AI"
+      },
+      {
+        "command": "dattoham-ai.generateTests",
+        "title": "Generate Tests",
+        "category": "Dattoham AI"
+      },
+      {
+        "command": "dattoham-ai.reviewCode",
+        "title": "Review Code",
+        "category": "Dattoham AI"
+      },
+      {
+        "command": "dattoham-ai.openWebview",
+        "title": "Open AI Assistant",
+        "category": "Dattoham AI"
+      },
+      {
+        "command": "dattoham-ai.securityScan",
+        "title": "Security Scan",
+        "category": "Dattoham AI"
+      },
+      {
+        "command": "dattoham-ai.generateDiagram",
+        "title": "Generate Diagram",
+        "category": "Dattoham AI"
+      },
+      {
+        "command": "dattoham-ai.refactorCode",
+        "title": "Refactor Code",
+        "category": "Dattoham AI"
+      },
+      {
+        "command": "dattoham-ai.addComments",
+        "title": "Add Comments",
+        "category": "Dattoham AI"
+      },
+      {
+        "command": "dattoham-ai.sendFeedback",
+        "title": "Send Feedback",
+        "category": "Dattoham AI"
+      },
+      {
+        "command": "dattoham-ai.updateModels",
+        "title": "Update Models",
+        "category": "Dattoham AI"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "submenu": "dattoham-ai.submenu",
+          "group": "1_modification"
+        }
+      ],
+      "dattoham-ai.submenu": [
+        {
+          "command": "dattoham-ai.generateCode"
+        },
+        {
+          "command": "dattoham-ai.optimizeCode"
+        },
+        {
+          "command": "dattoham-ai.explainCode"
+        },
+        {
+          "command": "dattoham-ai.debugCode"
+        },
+        {
+          "command": "dattoham-ai.generateTests"
+        },
+        {
+          "command": "dattoham-ai.reviewCode"
+        },
+        {
+          "command": "dattoham-ai.securityScan"
+        },
+        {
+          "command": "dattoham-ai.generateDiagram"
+        },
+        {
+          "command": "dattoham-ai.refactorCode"
+        },
+        {
+          "command": "dattoham-ai.addComments"
+        }
+      ]
+    },
+    "submenus": [
+      {
+        "id": "dattoham-ai.submenu",
+        "label": "Dattoham AI"
+      }
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "dattoham-ai.chat",
+          "name": "Dattoham AI Chat",
+          "when": "true"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Dattoham AI",
+      "properties": {
+        "dattoham-ai.ollamaUrl": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "Ollama server URL"
+        },
+        "dattoham-ai.primaryModel": {
+          "type": "string",
+          "default": "qwen2.5-coder:32b-instruct-q4_K_M",
+          "description": "Primary model for code generation"
+        },
+        "dattoham-ai.fallbackModels": {
+          "type": "array",
+          "default": ["qwen2.5:7b-instruct-q4_K_M", "deepseek-v2:16b-lite-instruct-q4_K_M", "codellama:70b-instruct-q4_K_M"],
+          "description": "Fallback models for speed/availability"
+        },
+        "dattoham-ai.autoOptimize": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable automatic code optimization suggestions"
+        },
+        "dattoham-ai.enableTelemetry": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable anonymous usage telemetry"
+        },
+        "dattoham-ai.autoSecurity": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable automatic security scanning"
+        },
+        "dattoham-ai.showDiagrams": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show code diagrams and visualizations"
+        },
+        "dattoham-ai.smartModelSelection": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically select best model for each task"
+        },
+        "dattoham-ai.feedbackEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable feedback collection to improve AI responses"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "vscode:prepublish": "npm run compile",
+    "test": "node ./out/src/test/mockTest.js",
+    "test:watch": "mocha --watch 'out/test/**/*.js'",
+    "test:perf": "node ./out/src/test/mockPerf.js",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts --max-warnings 0",
+    "lint:fix": "eslint src --ext ts --fix",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/node": "16.x",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "eslint": "^8.28.0",
+    "typescript": "^4.9.4",
+    "@vscode/test-electron": "^2.3.8",
+    "vsce": "^2.15.0",
+    "mocha": "^10.2.0",
+    "@types/mocha": "^10.0.0",
+    "glob": "^8.1.0",
+    "@types/glob": "^8.1.0"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "web-tree-sitter": "^0.20.8",
+    "node-fetch": "^3.3.2"
+  }
+}
