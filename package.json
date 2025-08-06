@@ -29,7 +29,7 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "main": "./out/extension.js",
+  "main": "./out/src/extension.js",
   "icon": "icon.png",
   "galleryBanner": {
     "color": "#1e1e1e",
