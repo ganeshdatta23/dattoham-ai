@@ -47,7 +47,7 @@ function validatePackageJson(): boolean {
 
 function validateExtensionStructure(): boolean {
     try {
-        const extensionPath = path.resolve(__dirname, '../../extension.js');
+        const extensionPath = path.resolve(__dirname, '../extension.js');
         const extensionExists = fs.existsSync(extensionPath);
         
         console.log('✅ Extension structure validation:');
