@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 import { LLMService } from './llmService';
+import { GeminiService } from './geminiService';
+import { AIProviderManager } from './aiProviderManager';
 import { ModelManager } from './modelManager';
 import { CodeAnalyzer } from './codeAnalyzer';
 import { FrameworkDetector } from './frameworkDetector';
@@ -23,6 +25,7 @@ export async function activate(context: vscode.ExtensionContext) {
     const telemetryService = new TelemetryService();
     const modelManager = new ModelManager();
     const llmService = new LLMService();
+    const geminiService = new GeminiService();
     const codeAnalyzer = new CodeAnalyzer();
     const frameworkDetector = new FrameworkDetector();
     const contextProvider = new ContextProvider();
@@ -33,6 +36,9 @@ export async function activate(context: vscode.ExtensionContext) {
     const diagramGenerator = new DiagramGenerator();
     const diffViewer = new DiffViewer();
     const aiEngine = new AIEngine(llmService, codeAnalyzer);
+    
+    // Initialize AI provider manager
+    const aiProviderManager = new AIProviderManager(llmService, geminiService);
     const feedbackService = new FeedbackService();
     
     // Initialize UI providers
@@ -93,6 +99,13 @@ export async function activate(context: vscode.ExtensionContext) {
         }),
         vscode.commands.registerCommand('dattoham-ai.updateModels', async () => {
             await modelManager.checkForUpdates();
+        }),
+        vscode.commands.registerCommand('dattoham-ai.switchProvider', async () => {
+            const config = vscode.workspace.getConfiguration('dattoham-ai');
+            const current = config.get('aiProvider', 'ollama');
+            const newProvider = current === 'ollama' ? 'gemini' : 'ollama';
+            await config.update('aiProvider', newProvider, true);
+            vscode.window.showInformationMessage(`Switched to ${newProvider.toUpperCase()} provider`);
         }),
 
     ];

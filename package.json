@@ -109,6 +109,11 @@
         "command": "dattoham-ai.updateModels",
         "title": "Update Models",
         "category": "Dattoham AI"
+      },
+      {
+        "command": "dattoham-ai.switchProvider",
+        "title": "Switch AI Provider",
+        "category": "Dattoham AI"
       }
     ],
     "menus": {
@@ -213,6 +218,17 @@
           "type": "boolean",
           "default": true,
           "description": "Enable feedback collection to improve AI responses"
+        },
+        "dattoham-ai.aiProvider": {
+          "type": "string",
+          "enum": ["ollama", "gemini"],
+          "default": "ollama",
+          "description": "AI provider: Ollama (local) or Gemini (cloud)"
+        },
+        "dattoham-ai.geminiApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Gemini API key (required when using Gemini provider)"
         }
       }
     }
