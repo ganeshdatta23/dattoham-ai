@@ -2,7 +2,7 @@
   "name": "dattoham-ai-code-agent",
   "displayName": "Dattoham AI",
   "description": "World's most advanced free coding assistant with local Ollama integration, matching Claude Sonnet 4 performance",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "publisher": "GaneshDattaPadamata",
   "author": {
     "name": "dattoham-ai",
@@ -29,7 +29,7 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "main": "./out/src/extension.js",
+  "main": "./out/src/working-extension.js",
   "icon": "icon.png",
   "galleryBanner": {
     "color": "#1e1e1e",
@@ -51,117 +51,17 @@
         "category": "Dattoham AI"
       },
       {
-        "command": "dattoham-ai.optimizeCode",
-        "title": "Optimize Code",
-        "category": "Dattoham AI"
-      },
-      {
         "command": "dattoham-ai.explainCode",
         "title": "Explain Code",
         "category": "Dattoham AI"
       },
       {
-        "command": "dattoham-ai.debugCode",
-        "title": "Debug Code",
-        "category": "Dattoham AI"
-      },
-      {
-        "command": "dattoham-ai.generateTests",
-        "title": "Generate Tests",
-        "category": "Dattoham AI"
-      },
-      {
-        "command": "dattoham-ai.reviewCode",
-        "title": "Review Code",
-        "category": "Dattoham AI"
-      },
-      {
-        "command": "dattoham-ai.openWebview",
-        "title": "Open AI Assistant",
-        "category": "Dattoham AI"
-      },
-      {
-        "command": "dattoham-ai.securityScan",
-        "title": "Security Scan",
-        "category": "Dattoham AI"
-      },
-      {
-        "command": "dattoham-ai.generateDiagram",
-        "title": "Generate Diagram",
-        "category": "Dattoham AI"
-      },
-      {
-        "command": "dattoham-ai.refactorCode",
-        "title": "Refactor Code",
-        "category": "Dattoham AI"
-      },
-      {
-        "command": "dattoham-ai.addComments",
-        "title": "Add Comments",
-        "category": "Dattoham AI"
-      },
-      {
-        "command": "dattoham-ai.sendFeedback",
-        "title": "Send Feedback",
-        "category": "Dattoham AI"
-      },
-      {
-        "command": "dattoham-ai.updateModels",
-        "title": "Update Models",
-        "category": "Dattoham AI"
-      },
-      {
-        "command": "dattoham-ai.switchProvider",
-        "title": "Switch AI Provider",
+        "command": "dattoham-ai.openChat",
+        "title": "Open Chat",
         "category": "Dattoham AI"
       }
     ],
-    "menus": {
-      "editor/context": [
-        {
-          "submenu": "dattoham-ai.submenu",
-          "group": "1_modification"
-        }
-      ],
-      "dattoham-ai.submenu": [
-        {
-          "command": "dattoham-ai.generateCode"
-        },
-        {
-          "command": "dattoham-ai.optimizeCode"
-        },
-        {
-          "command": "dattoham-ai.explainCode"
-        },
-        {
-          "command": "dattoham-ai.debugCode"
-        },
-        {
-          "command": "dattoham-ai.generateTests"
-        },
-        {
-          "command": "dattoham-ai.reviewCode"
-        },
-        {
-          "command": "dattoham-ai.securityScan"
-        },
-        {
-          "command": "dattoham-ai.generateDiagram"
-        },
-        {
-          "command": "dattoham-ai.refactorCode"
-        },
-        {
-          "command": "dattoham-ai.addComments"
-        }
-      ]
-    },
-    "submenus": [
-      {
-        "id": "dattoham-ai.submenu",
-        "label": "Dattoham AI"
-      }
-    ],
+
     "views": {
       "explorer": [
         {
@@ -244,7 +144,7 @@
     "lint": "eslint src --ext ts --max-warnings 0",
     "lint:fix": "eslint src --ext ts --fix",
     "package": "vsce package",
-    "publish": "vsce publish"
+    "publish": "vsce publish -p $VSCE_PAT"
   },
   "devDependencies": {
     "@types/vscode": "^1.74.0",

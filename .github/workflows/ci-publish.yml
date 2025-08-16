@@ -55,6 +55,12 @@ jobs:
       run: npm run compile
     - name: Package extension
       run: npm run package
+    
+    - name: Publish to Marketplace
+      if: github.ref == 'refs/heads/main'
+      run: npm run publish
+      env:
+        VSCE_PAT: ${{ secrets.VSCE_PAT }}
     - name: Upload extension artifact
       uses: actions/upload-artifact@v4
       with:

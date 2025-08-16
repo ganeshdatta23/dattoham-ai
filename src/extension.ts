@@ -1,53 +1,57 @@
 import * as vscode from 'vscode';
-import { LLMService } from './llmService';
 import { GeminiService } from './geminiService';
-import { AIProviderManager } from './aiProviderManager';
-import { ModelManager } from './modelManager';
+import { WebviewProvider } from './webview';
+import { ChatProvider } from './chatProvider';
+import { LLMService } from './llmService';
 import { CodeAnalyzer } from './codeAnalyzer';
+import { OptimizationEngine } from './optimizationEngine';
+import { SecurityScanner } from './securityScanner';
+import { DiagramGenerator } from './diagramGenerator';
+import { FeedbackService } from './feedbackService';
+import { ModelManager } from './modelManager';
 import { FrameworkDetector } from './frameworkDetector';
 import { ContextProvider } from './contextProvider';
-import { GitIntegration } from './gitIntegration';
-import { SecurityScanner } from './securityScanner';
-import { OptimizationEngine } from './optimizationEngine';
-import { TestGenerator } from './testGenerator';
-import { ChatProvider } from './chatProvider';
-import { WebviewProvider } from './webview';
-import { DiagramGenerator } from './diagramGenerator';
-import { DiffViewer } from './diffViewer';
-import { AIEngine } from './aiEngine';
-import { TelemetryService } from './telemetryService';
-import { FeedbackService } from './feedbackService';
+import { ChatWindow } from './chatWindow';
 
 export async function activate(context: vscode.ExtensionContext) {
-    console.log('🤖 Dattoham AI - World\'s most advanced free coding assistant activated!');
-
-    // Initialize core services
-    const telemetryService = new TelemetryService();
-    const modelManager = new ModelManager();
-    const llmService = new LLMService();
-    const geminiService = new GeminiService();
-    const codeAnalyzer = new CodeAnalyzer();
-    const frameworkDetector = new FrameworkDetector();
-    const contextProvider = new ContextProvider();
-    const gitIntegration = new GitIntegration();
-    const securityScanner = new SecurityScanner();
-    const optimizationEngine = new OptimizationEngine();
-    const testGenerator = new TestGenerator(llmService);
-    const diagramGenerator = new DiagramGenerator();
-    const diffViewer = new DiffViewer();
-    const aiEngine = new AIEngine(llmService, codeAnalyzer);
-    
-    // Initialize AI provider manager
-    const aiProviderManager = new AIProviderManager(llmService, geminiService);
-    const feedbackService = new FeedbackService();
-    
-    // Initialize UI providers
-    const chatProvider = new ChatProvider(context.extensionUri, llmService, contextProvider);
-    const webviewProvider = new WebviewProvider(context.extensionUri, llmService, codeAnalyzer, optimizationEngine, frameworkDetector, contextProvider);
+    console.log('🤖 Dattoham AI -  most advanced free coding assistant activated!');
 
     // Initialize services
-    llmService.initialize();
+    const llmService = new LLMService();
+    const codeAnalyzer = new CodeAnalyzer();
+    const optimizationEngine = new OptimizationEngine();
+    const securityScanner = new SecurityScanner();
+    const diagramGenerator = new DiagramGenerator();
+    const feedbackService = new FeedbackService();
+    const modelManager = new ModelManager();
+    const frameworkDetector = new FrameworkDetector();
+    const contextProvider = new ContextProvider();
+    
+    // Initialize webview providers
+    const webviewProvider = new WebviewProvider(
+        context.extensionUri,
+        llmService,
+        codeAnalyzer,
+        optimizationEngine,
+        frameworkDetector,
+        contextProvider
+    );
+    
+    const chatProvider = new ChatProvider(
+        context.extensionUri,
+        llmService,
+        contextProvider
+    );
+    
+    const chatWindow = new ChatWindow(llmService);
+    
+    // Initialize components
     codeAnalyzer.initialize();
+    
+    // Initialize LLM service lazily to avoid startup errors
+    llmService.initialize().catch(() => {
+        // Silently handle connection errors - will show message when user tries to use it
+    });
 
     // Register commands
     const commands = [
@@ -107,12 +111,14 @@ export async function activate(context: vscode.ExtensionContext) {
             await config.update('aiProvider', newProvider, true);
             vscode.window.showInformationMessage(`Switched to ${newProvider.toUpperCase()} provider`);
         }),
+        vscode.commands.registerCommand('dattoham-ai.openChat', () => {
+            chatWindow.show();
+        }),
 
     ];
 
     // Register webview providers
     context.subscriptions.push(
-        vscode.window.registerWebviewViewProvider('dattoham-ai.webview', webviewProvider),
         vscode.window.registerWebviewViewProvider('dattoham-ai.chat', chatProvider),
         ...commands
     );
@@ -135,8 +141,8 @@ export async function activate(context: vscode.ExtensionContext) {
     // Status bar item
     const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     statusBarItem.text = "$(robot) Dattoham AI";
-    statusBarItem.command = 'dattoham-ai.openWebview';
-    statusBarItem.tooltip = 'Open Dattoham AI Assistant';
+    statusBarItem.command = 'dattoham-ai.openChat';
+    statusBarItem.tooltip = 'Open Dattoham AI Chat';
     statusBarItem.show();
     context.subscriptions.push(statusBarItem);
 }

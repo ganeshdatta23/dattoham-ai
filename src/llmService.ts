@@ -31,20 +31,21 @@ export class LLMService {
     }
 
     async initialize(): Promise<void> {
-        try {
-            await this.checkOllamaConnection();
-            await this.ensureModelsAvailable();
-            vscode.window.showInformationMessage('Dattoham AI: Connected to Ollama successfully');
-        } catch (error) {
-            vscode.window.showErrorMessage(`Dattoham AI: Failed to connect to Ollama - ${error}`);
-            this.showSetupInstructions();
-        }
+        // Don't auto-connect on startup to avoid errors
+        console.log('LLMService initialized - will connect when needed');
     }
 
     private async checkOllamaConnection(): Promise<void> {
-        const response = await axios.get(`${this.ollamaUrl}/api/tags`);
-        const models = response.data.models || [];
-        this.availableModels = new Set(models.map((m: any) => m.name));
+        try {
+            const response = await axios.get(`${this.ollamaUrl}/api/tags`);
+            const models = response.data.models || [];
+            this.availableModels = new Set(models.map((m: any) => m.name));
+        } catch (error: any) {
+            if (error.code === 'ECONNREFUSED') {
+                throw new Error('Ollama not running');
+            }
+            throw new Error(`Connection failed: ${error.message}`);
+        }
     }
 
     private async ensureModelsAvailable(): Promise<void> {
@@ -79,10 +80,24 @@ export class LLMService {
         maxTokens?: number;
         stream?: boolean;
     } = {}): Promise<string> {
+        const config = vscode.workspace.getConfiguration('dattoham-ai');
+        const provider = config.get('aiProvider') as string;
+        
+        if (provider === 'gemini') {
+            return await this.generateGeminiResponse(messages, options);
+        }
+        
+        try {
+            await this.checkOllamaConnection();
+        } catch (error) {
+            this.showSetupInstructions();
+            return 'Ollama is not running. Please install and start Ollama to use Dattoham AI.';
+        }
+
         const model = options.model || this.getAvailableModel();
         
         if (!model) {
-            throw new Error('No available models found');
+            return 'No models available. Please install models using: ollama pull qwen2.5-coder:32b-instruct-q4_K_M';
         }
 
         const prompt = this.buildPrompt(messages);
@@ -103,8 +118,53 @@ export class LLMService {
             return response.data.response;
         } catch (error) {
             console.error('LLM generation error:', error);
-            throw new Error(`Failed to generate response: ${error}`);
+            return `Error connecting to Ollama. Please ensure Ollama is running on ${this.ollamaUrl}`;
         }
+    }
+
+    private async generateGeminiResponse(messages: ChatMessage[], options: any): Promise<string> {
+        const config = vscode.workspace.getConfiguration('dattoham-ai');
+        let apiKey = config.get('geminiApiKey', '');
+        
+        if (!apiKey) {
+            apiKey = await this.promptForApiKey();
+            if (!apiKey) return 'Gemini API key required';
+        }
+        
+        try {
+            const response = await axios.post(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
+                {
+                    contents: [{
+                        parts: [{ text: this.buildPrompt(messages) }]
+                    }]
+                }
+            );
+            
+            return response.data.candidates[0].content.parts[0].text;
+        } catch (error: any) {
+            if (error.response?.status === 400 || error.response?.status === 401) {
+                await config.update('geminiApiKey', '', true);
+                vscode.window.showErrorMessage('Invalid API key. Please try again.');
+                return await this.generateGeminiResponse(messages, options);
+            }
+            return `Gemini API error: ${error.message}`;
+        }
+    }
+    
+    private async promptForApiKey(): Promise<string> {
+        const apiKey = await vscode.window.showInputBox({
+            prompt: 'Enter your Gemini API key',
+            password: true,
+            placeHolder: 'AIza...'
+        });
+        
+        if (apiKey) {
+            const config = vscode.workspace.getConfiguration('dattoham-ai');
+            await config.update('geminiApiKey', apiKey, true);
+        }
+        
+        return apiKey || '';
     }
 
     private getAvailableModel(): string | null {
